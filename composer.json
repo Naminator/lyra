@@ -1,0 +1,26 @@
+{
+    "name": "lyra/lyra",
+    "description": "A lightweight and easy to use HTTP PHP client",
+    "license": "MIT",
+    "authors": [
+    {
+        "name": "Lachezar Tsochev",
+        "email": "ltsochev@live.com"
+    }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+     "php": ">=5.4.0",
+     "lib-curl": "*",
+     "nesbot/carbon": "1.*"
+     },
+     "require-dev": {
+         "mockery/mockery": "0.7.2",
+         "phpunit/phpunit": "3.7.*"
+         },
+         "autoload": {
+            "psr-0": {
+                "Lyra": "src"
+          }
+      }
+  }
