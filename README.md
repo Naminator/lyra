@@ -1,4 +1,7 @@
-lyra
+Lyra
 ====
 
-A lightweight and easy to use HTTP PHP client
+A Lightweight And Easy To Use HTTP PHP Client
+---------------------------------------------
+
+Instructions to be done.
