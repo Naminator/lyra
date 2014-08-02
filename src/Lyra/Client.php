@@ -1,6 +1,7 @@
 <?php namespace Lyra;
 
 use Lyra\Collection\Collection;
+use Lyra\Exceptions\UnsupportedDriverException;
 
 class Client
 {
@@ -58,6 +59,10 @@ class Client
 		}
 
 		$this->driver = new $driverClassName($this->settings);
+		if ( !$this->driver->isSupported() )
+		{
+			throw new UnsupportedDriverException("Your system doesn't support the '{$driver}' driver.");
+		}
 	}
 
 	/**
@@ -121,7 +126,8 @@ class Client
 			$this->url .= '/' . $subRoute;
 		}
 
-		$this->driver->prepareRequest($url, $method, $data);
+
+		$this->driver->prepareRequest($this->url, $method, $data);
 		return $this->driver->send();
 	}
 
@@ -156,7 +162,7 @@ class Client
 	private function parseSettings(array $settings = array())
 	{
 		$defaultSettings = $this->getDefaultSettings();
-		$this->settings = new Collection(array_replace($settings, $defaultSettings));
+		$this->settings = new Collection(array_replace($defaultSettings, $settings));
 	}
 
 	protected function getDefaultSettings()

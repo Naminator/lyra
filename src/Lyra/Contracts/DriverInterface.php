@@ -10,6 +10,16 @@ interface DriverInterface {
 	public function __construct(\Lyra\Collection\Collection $settings);
 
 	/**
+	 * Checks whether the system supports
+	 * this driver in particular. If this 
+	 * function returns false an exception will
+	 * be thrown by the system
+	 * 
+	 * @return bool
+	 */
+	public function isSupported();
+
+	/**
 	 * Prepare whatever in-memory objects that
 	 * you might need in order for the communicator to work.
 	 * 
@@ -27,4 +37,11 @@ interface DriverInterface {
 	 * @return \Lyra\Response
 	 */
 	public function send();
+
+	/**
+	 * Return the raw driver handler
+	 * 
+	 * @return mixed
+	 */
+	public function getDriverRaw();
 }
