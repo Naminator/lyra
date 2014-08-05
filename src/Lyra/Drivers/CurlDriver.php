@@ -5,6 +5,21 @@ use Lyra\Contracts\DriverInterface;
 
 class CurlDriver implements DriverInterface
 {
+
+	/**
+	 * The Driver's Name
+	 * 
+	 * @var string
+	 */
+	protected $driverName = "cURL Driver";
+
+	/**
+	 * The Driver's Version
+	 * 
+	 * @var string
+	 */
+	const VERSION = "1.0.0";
+
 	/**
 	 * Settings Store
 	 * 
@@ -71,6 +86,7 @@ class CurlDriver implements DriverInterface
 	 * @param string $url
 	 * @param string $method
 	 * @param array $data
+	 * @throws \Lyra\Exceptions\UnsupportedHTTPMethodException
 	 * @return void
 	 */
 	public function prepareRequest($url, $method = 'GET', array $data = array())
@@ -90,6 +106,17 @@ class CurlDriver implements DriverInterface
 
 		curl_setopt($this->handler, CURLOPT_HEADER, TRUE);
 		curl_setopt($this->handler, CURLOPT_RETURNTRANSFER, TRUE);
+
+		if ( $forbidCache = $this->settings->get('forbid_cache') )
+		{
+			curl_setopt($this->handler, CURLOPT_FORBID_REUSE, TRUE); 
+			curl_setopt($this->handler, CURLOPT_FRESH_CONNECT, TRUE);
+		}
+		else
+		{
+			curl_setopt($this->handler, CURLOPT_FORBID_REUSE, FALSE); 
+			curl_setopt($this->handler, CURLOPT_FRESH_CONNECT, FALSE);
+		}
 
 		if ( $this->settings->get('allow_redirects') )
 		{
@@ -113,10 +140,30 @@ class CurlDriver implements DriverInterface
 			curl_setopt($this->handler, CURLOPT_HTTPHEADER, $headers);
 		}
 
-		if ( $method == 'GET' )
+		switch($method)
 		{
-			
+			case 'GET':
+
+				break;
+			case 'POST':
+				curl_setopt_array($this->handler, array(
+					CURLOPT_URL			=> $this->url,
+					CURLOPT_POST		=> 1,
+					CURLOPT_POSTFIELDS	=> $this->requestData
+				));
+				break;
+			case 'PUT':
+
+				break;
+			case 'DELETE':
+
+				break;
+			default:
+				throw new \Lyra\Exceptions\UnsupportedHTTPMethodException("Lyra's cURL driver does not support the '{$method}'' HTTP method.");
+				break;
 		}
+
+		return $this;
 	}
 
 	/**
@@ -128,9 +175,22 @@ class CurlDriver implements DriverInterface
 	public function send()
 	{
 		$httpResponse = curl_exec( $this->handler );
+		$curlInfo = curl_getinfo( $this->handler );
 		curl_close( $this->handler );
 
+		return new Response($this->url, $httpResponse, $curlInfo['total_time']);
+	}
 
+	/**
+	 * Checks whether the given method is supported
+	 * by our driver or not
+	 * 
+	 * @param string $method HTTP Method
+	 * @return bool
+	 */
+	public function isMethodSupported($method = 'GET')
+	{
+		return in_array($method, $this->getAllowedRequestMethods());
 	}
 
 	/**
@@ -141,6 +201,27 @@ class CurlDriver implements DriverInterface
 	public function getDriverRaw()
 	{
 		return $this->handler;
+	}
+
+	/**
+	 * Retrieves the driver's name in 
+	 * a string form
+	 * 
+	 * @return string
+	 */
+	public function getDriverName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * Returns the version string
+	 * 
+	 * @return string
+	 */
+	public function getDriverVersion()
+	{
+		return static::VERSION;
 	}
 
 	/**

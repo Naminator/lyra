@@ -2,6 +2,8 @@
 
 use Lyra\Collection\Collection;
 use Lyra\Exceptions\UnsupportedDriverException;
+use Lyra\Exceptions\UnsupportedHTTPMethodException;
+
 
 class Client
 {
@@ -39,6 +41,7 @@ class Client
 	 * 
 	 * @param string $url
 	 * @param array $settings
+	 * @throws \Lyra\Exceptions\UnsupportedHTTPMethodException | \InvalidArgumentException
 	 * @return void
 	 */
 	public function __construct($url, array $settings = array())
@@ -126,6 +129,12 @@ class Client
 			$this->url .= '/' . $subRoute;
 		}
 
+		if ( !$this->driver->isMethodSupported($method) )
+		{
+			$driverNameVer = $this->driver->getDriverName() . ' (' . $this->driver->getDriverVersion . ')';
+
+			throw new UnsupportedHTTPMethodException("{$driverNameVer} does not support the '{$method}' HTTP method.");
+		}
 
 		$this->driver->prepareRequest($this->url, $method, $data);
 		return $this->driver->send();
@@ -171,6 +180,7 @@ class Client
 			'driver'	=> 'curl',
 			'timeout'	=> 10,
 			'allow_redirects' => TRUE,
+			'forbid_cache'	=> TRUE,
 			'user_agent' => static::getDefaultUserAgent(),
 			'headers'	=> array());
 

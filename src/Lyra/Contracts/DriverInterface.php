@@ -20,6 +20,15 @@ interface DriverInterface {
 	public function isSupported();
 
 	/**
+	 * Checks whether the given method is supported
+	 * by our driver or not
+	 * 
+	 * @param string $method HTTP Method
+	 * @return bool
+	 */
+	public function isMethodSupported($method = 'GET');
+
+	/**
 	 * Prepare whatever in-memory objects that
 	 * you might need in order for the communicator to work.
 	 * 
@@ -44,4 +53,19 @@ interface DriverInterface {
 	 * @return mixed
 	 */
 	public function getDriverRaw();
+
+	/**
+	 * Retrieves the driver's name in 
+	 * a string form
+	 * 
+	 * @return string
+	 */
+	public function getDriverName();
+
+	/**
+	 * Returns the version string
+	 * 
+	 * @return string
+	 */
+	public function getDriverVersion();
 }
