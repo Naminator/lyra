@@ -22,6 +22,9 @@
          "autoload": {
             "psr-0": {
                 "Lyra": "src"
-          }
+          },
+            "files": [
+                "Lyra/helpers.php"
+            ]
       }
   }

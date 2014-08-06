@@ -148,7 +148,7 @@ class CurlDriver implements DriverInterface
 			case 'POST':
 				curl_setopt_array($this->handler, array(
 					CURLOPT_URL			=> $this->url,
-					CURLOPT_POST		=> 1,
+					CURLOPT_POST		=> TRUE,
 					CURLOPT_POSTFIELDS	=> $this->requestData
 				));
 				break;
@@ -178,7 +178,7 @@ class CurlDriver implements DriverInterface
 		$curlInfo = curl_getinfo( $this->handler );
 		curl_close( $this->handler );
 
-		return new Response($this->url, $httpResponse, $curlInfo['total_time']);
+		return new Response($this->url, $httpResponse, $curlInfo);
 	}
 
 	/**
@@ -235,7 +235,7 @@ class CurlDriver implements DriverInterface
 	}
 
 	/**
-	 * Parses the header array into cURL type headers
+	 * Parses the header array into cURL type headers.
 	 * 
 	 * @param array $headers
 	 * @return array
@@ -258,6 +258,20 @@ class CurlDriver implements DriverInterface
 			}
 		}
 
+		// Exclude the content type header on POST
+		if ( $this->requestMethod == "POST" )
+		{
+			foreach($curlHeaders as $index => $header)
+			{
+				if ( strpos( strtolower($header), 'content-type') !== FALSE )
+				{
+					unset($curlHeaders[$index]);
+				}
+			}
+
+			reset($curlHeaders);
+		}
+		
 		return $curlHeaders;
 	}
 }
