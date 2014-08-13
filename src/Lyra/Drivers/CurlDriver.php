@@ -143,7 +143,19 @@ class CurlDriver implements DriverInterface
 		switch($method)
 		{
 			case 'GET':
+				// Check for request data
+				if ( !is_null($this->requestData) )
+				{
+					$queryString = http_build_query( $this->requestData );
+					$glue = strpos($this->url, "?") !== false ? '&' : '?';
 
+					$this->url .= $glue . $queryString;
+				}
+
+				curl_setopt_array($this->handler, array(
+					CURLOPT_URL			=> $this->url,
+					CURLOPT_HTTPGET		=> TRUE
+				));
 				break;
 			case 'POST':
 				curl_setopt_array($this->handler, array(
@@ -153,10 +165,11 @@ class CurlDriver implements DriverInterface
 				));
 				break;
 			case 'PUT':
-
-				break;
 			case 'DELETE':
-
+				curl_setopt_array($this->handler, array(
+					CURLOPT_URL 		=> $this->url,
+					CURLOPT_CUSTOMREQUEST => $method,
+				));
 				break;
 			default:
 				throw new \Lyra\Exceptions\UnsupportedHTTPMethodException("Lyra's cURL driver does not support the '{$method}'' HTTP method.");
