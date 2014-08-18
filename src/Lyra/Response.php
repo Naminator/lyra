@@ -118,6 +118,7 @@ class Response implements ArrayableInterface, JsonableInterface
 	{
 		return array(
 			'http_code'		=> 200,
+			'total_time'	=> 0,
 		);
 	}
 
