@@ -54,7 +54,7 @@ class Client
 		$this->url = $this->removeTrailingSlash($url);
 		$this->parseSettings($settings);
 
-		$driver = strtolower( ucfirst($this->settings['driver']) );
+		$driver = ucfirst( strtolower($this->settings['driver']) );
 		$driverClassName = 'Lyra\\Drivers\\' . $driver . 'Driver';
 		if ( !class_exists($driverClassName) )
 		{
