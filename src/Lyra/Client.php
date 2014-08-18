@@ -86,7 +86,7 @@ class Client
 				return $this->send("POST", $subRoute, $data);
 				break;
 			default:
-				throw new \InvalidArgumentException("Bad parameters given for POST method.");
+				return $this->send("POST");
 				break;
 		}
 	}
@@ -109,7 +109,7 @@ class Client
 				return $this->send("GET", $subRoute, $data);
 				break;
 			default:
-				throw new \InvalidArgumentException("Bad parameters given for GET method.");
+				return $this->send("GET");
 				break;
 		}
 	}
