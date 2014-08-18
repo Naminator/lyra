@@ -24,7 +24,7 @@
                 "Lyra": "src"
           },
             "files": [
-                "Lyra/helpers.php"
+                "src/Lyra/helpers.php"
             ]
       }
   }
